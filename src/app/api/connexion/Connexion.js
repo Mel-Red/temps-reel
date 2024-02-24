@@ -1,1 +1,0 @@
- // TODO: Créer les fonctions qui permettront la connexion des users à la salle et à la bdd si le user est connecté en admin.
