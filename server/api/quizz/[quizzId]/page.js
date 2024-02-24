@@ -8,7 +8,7 @@ export default function GetQuizzAndQuestions({params}) {
         //         {
         //             idQuestion: 1,
         //             question: "La question",
-        //             typeQuestion: 1 Pour une question solo (champs text), 2 pour des question à choix multiple (jusqu'a 4),
+        //             typeQuestion: 1 Pour une question solo (champs text), 2 pour des question à choix multiple (jusqu'a 4 réponses possibles),
         //             reponse: 1, Pour les question à choix multiple on met l'index de la réponse dans la propriété reponse.
         //             choix: {
         //                  1: "Réponse 1"

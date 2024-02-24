@@ -2,10 +2,13 @@
 import styles from "../page.module.css";
 import { io } from 'socket.io-client'
 import {useEffect, useState} from "react";
+import { useRouter } from 'next/navigation'
 export default function UserConnectionForm() {
     const [username, setUsername] = useState("");
     const [roomId, setRoomdId] = useState("")
     const [socket, setSocket] = useState()
+
+    const router = useRouter()
 
     useEffect(() => {
         const socket = io('http://localhost:3000')
@@ -17,6 +20,10 @@ export default function UserConnectionForm() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         socket.emit('joinRoom', {username: username, roomId: roomId});
+        socket.on('roomJoined', ({roomId, username}) => {
+            console.log(roomId)
+            router.push(`/quizz/quizzSelect/${roomId}/${username}`)
+        })
     }
 
     return (

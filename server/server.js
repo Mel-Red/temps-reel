@@ -7,11 +7,19 @@ const io = require('socket.io')(3000, {
 
 io.on("connection", (socket) => {
     console.log("A user connected")
+
+
     socket.on('joinRoom', ({username, roomId, quizzId}) => {
         if (!roomId)
             roomId = crypto.randomUUID();
         const message = joinRoom(rooms,username,roomId,quizzId)
-        console.log(message)
+        console.log(roomId)
+        socket.emit('roomJoined', ({roomId, username}))
+    })
+
+    socket.on('getRoomUser', ({roomId}) => {
+        let room = rooms.find(room => room.id === roomId)
+        socket.emit('getRoomUser', room.users)
     })
     socket.on('disconnect', () => {
         console.log('user deco')
@@ -68,6 +76,7 @@ io.on("connection", (socket) => {
 
 
 const rooms = []
+
 const joinRoom = (rooms, username, roomid, quizzId = null) => {
     let room = rooms.find(room => room.id === roomid)
 
@@ -86,11 +95,12 @@ const joinRoom = (rooms, username, roomid, quizzId = null) => {
         }
         rooms.push(room)
         console.log(rooms)
-        return 'la room a bien été crée'
+        return 'Nouvelle room crée'
     }
 
     // j'entre dans la room
     room.users.push(username);
+    console.log(room)
     return 'vous avez rejoint la room'
 }
 
