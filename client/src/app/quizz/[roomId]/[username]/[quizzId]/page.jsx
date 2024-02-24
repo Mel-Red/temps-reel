@@ -1,4 +1,5 @@
-import styles from "../../page.module.css";
+'use client'
+import styles from "../../../../page.module.css";
 import {useState} from "react";
 export default function Question({params}) {
     const [questionSimple, setQuestionSimple] = useState()

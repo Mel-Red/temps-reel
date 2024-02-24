@@ -1,7 +1,8 @@
 'use client'
 import styles from "../../../../page.module.css";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation'
+import {socket} from "@/app/socket";
 
 export default function QuizzSelect({params}) {
     const [username, setUsername] = useState(params.username)
@@ -27,7 +28,10 @@ export default function QuizzSelect({params}) {
     const router = useRouter()
 
     const goToQuizz = (e, quizzId) => {
-        router.push(`/quizz/${quizzId}/attente`)
+        socket.emit('setQuizzId', ({quizzId, roomId}))
+        socket.on('quizzIdSet', () => {
+            router.push(`/quizz/${roomId}/${username}/${quizzId}/attente`)
+        })
     }
 
     useEffect(() => {

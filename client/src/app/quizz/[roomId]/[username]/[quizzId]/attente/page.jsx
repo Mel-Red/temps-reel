@@ -1,20 +1,20 @@
 'use client'
-import {useEffect, useState} from "react";
-import styles from "../../../page.module.css";
+import {useContext, useEffect, useState} from "react";
+import styles from "../../../../../page.module.css";
 import SalleAttente from "@/app/components/SalleAttente";
-import axios from "axios";
+import {socket} from "@/app/socket";
 
 export default function Attente({params}) {
     const [playerList, setPlayerList] = useState(["Todd", "PabloX9", "XxX_CHARl3_XxX"])
-    const [roomId, setRoomId] = useState()
+
+    socket.emit('getRoomUser', (params.roomId))
+    socket.on('getRoomUser', (user) => {
+        setPlayerList(user)
+    })
 
     const startQuizz = () => {
 
     }
-
-    useEffect(() => {
-    //     Code to fetch all players in the room: socket.io
-    }, [playerList])
 
     return(
         <div className={styles.main}>

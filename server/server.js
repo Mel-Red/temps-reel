@@ -8,7 +8,6 @@ const io = require('socket.io')(3000, {
 io.on("connection", (socket) => {
     console.log("A user connected")
 
-
     socket.on('joinRoom', ({username, roomId, quizzId}) => {
         if (!roomId)
             roomId = crypto.randomUUID();
@@ -17,9 +16,17 @@ io.on("connection", (socket) => {
         socket.emit('roomJoined', ({roomId, username}))
     })
 
-    socket.on('getRoomUser', ({roomId}) => {
+    socket.on('setQuizzId', ({quizzId, roomId}) => {
+        let room = rooms.find(room => room => room.id === roomId)
+        room.quizzId = quizzId;
+        room.state = 'waiting'
+        console.log(room)
+        socket.emit('quizzIdSet')
+    })
+
+    socket.on('getRoomUser', (roomId) => {
         let room = rooms.find(room => room.id === roomId)
-        socket.emit('getRoomUser', room.users)
+        socket.emit('getRoomUser', (room.users))
     })
     socket.on('disconnect', () => {
         console.log('user deco')
@@ -88,10 +95,10 @@ const joinRoom = (rooms, username, roomid, quizzId = null) => {
     if (!room && !quizzId) {
         // je crée la room
         room = {
-            id:roomid,
-            quizzId:quizzId,
+            id: roomid,
+            quizzId: "",
             users: [username],
-            state: 'waiting'
+            state: 'selectQuizz'
         }
         rooms.push(room)
         console.log(rooms)

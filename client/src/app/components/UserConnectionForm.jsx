@@ -1,28 +1,19 @@
 'use client'
 import styles from "../page.module.css";
-import { io } from 'socket.io-client'
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import { useRouter } from 'next/navigation'
+import {socket} from "@/app/socket";
 export default function UserConnectionForm() {
     const [username, setUsername] = useState("");
     const [roomId, setRoomdId] = useState("")
-    const [socket, setSocket] = useState()
 
     const router = useRouter()
 
-    useEffect(() => {
-        const socket = io('http://localhost:3000')
-        setSocket(socket)
-        // socket.emit('joinRoom', {username: username, roomId: roomId});
-        // socket.on('joinRoom')
-    }, []);
-
     const handleSubmit = async (e) => {
         e.preventDefault()
-        socket.emit('joinRoom', {username: username, roomId: roomId});
+        socket.emit('joinRoom', {username, roomId});
         socket.on('roomJoined', ({roomId, username}) => {
-            console.log(roomId)
-            router.push(`/quizz/quizzSelect/${roomId}/${username}`)
+            router.push(`/quizz/${roomId}/${username}/quizzSelect`)
         })
     }
 
