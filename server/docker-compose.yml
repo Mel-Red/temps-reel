@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules # Remove this if you have pure JS dependencies
+    ports:
+      - "3000:3000"
+    depends_on:
+        - postgres
+    environment:
+      DATABASE_URL: postgres://root:root@postgres:5432/database
+  postgres:
+    image: postgres:15.4-alpine
+    environment:
+      TZ: 'Europe/Paris'
+      POSTGRES_DB: database
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+    ports:
+      - 5432:5432
+
+volumes:
+  database_data:
+  server:
