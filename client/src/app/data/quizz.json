@@ -1,0 +1,19 @@
+{
+  "quizzs": [
+    {
+      "id": 1,
+      "libelle": "Questionnaire culture G",
+      "questionsId": [1,2,3]
+    },
+    {
+      "id": 2,
+      "libelle": "Questionnaire culture Histoire",
+      "questionsId": [7,8,9]
+    },
+    {
+      "id": 3,
+      "libelle": "Questionnaire culture Math",
+      "questionsId": [12,13,14]
+    }
+  ]
+}

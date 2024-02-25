@@ -4,6 +4,8 @@ export default function SalleAttente(props) {
 
     return(
         <div className={styles.playerList}>
+            <p>{props.roomId}</p>
+
             <div className={styles.playerListList}>
                 {props.playerList !== [] ? props.playerList.map(player => <p>{player}</p>) : <p>Fetching players ... </p>}
             </div>

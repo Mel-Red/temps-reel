@@ -1,12 +1,19 @@
 'use client'
-import styles from "../../../../page.module.css";
-import {useState} from "react";
+import styles from "../../../../../page.module.css";
+import {useEffect, useState} from "react";
+import data from "@/app/data/quizz.json"
 export default function Question({params}) {
     const [questionSimple, setQuestionSimple] = useState()
-    const [questionMultiple, setQuestionMultiple] = useState("Voici une question")
+    const [questionMultiple, setQuestionMultiple] = useState()
     const [reponseSimple, setReponseSimple] = useState("")
     const [reponseMultiple, setReponseMultiple] = useState()
     const [reponseMultipleSelected, setReponseMultipleSelected] = useState()
+    const [quizz, setQuizz] = useState()
+
+    useEffect(() => {
+        const getQuizz = data.quizzs.find(quizz => quizz.id === params.quizzId)
+        setQuizz(getQuizz)
+    }, [])
     
     // récup questionnaire --> recup question avec id questionnaire --> ecouteur d'event vers le back pour la room --> envoie d'un event pour changer dn quetions 
     // validation dans le front --> envoie des résultats perso dans le back pour calcul global et classement. 
