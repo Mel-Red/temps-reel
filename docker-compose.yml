@@ -4,7 +4,7 @@ services:
     build:
       server/
     ports:
-      - "3001:3001"
+      - "3000:3000"
     volumes:
       - ./server:/usr/src/app
     depends_on:
@@ -16,7 +16,7 @@ services:
       client/
     container_name: docker-next
     ports:
-      - '3000:3000'
+      - '3001:3000'
     depends_on:
       - server
   postgres:
