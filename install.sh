@@ -1,9 +1,8 @@
 #!/bin/bash
 
-cd client
+cd server
 npm install
-docker-compose up -d
-cd ../server
+docker-compose up -d --remove-orphans
+cd ../client
 npm install
-docker-compose up -d
-
+docker-compose up -d --remove-orphans
