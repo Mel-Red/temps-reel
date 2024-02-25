@@ -5,15 +5,16 @@ const io = require('socket.io')(3000, {
     }
 })
 const { Client } = require('pg');
-
+const datatype1 = "Question"
+const datatype2 = "Reponse"
 
 // Database connection configuration
 const dbConfig = {
-  user: 'root',
-  password: 'root',
-  host: 'localhost',
-  port: 5432,
-  database: 'database',
+    user: 'root',
+    password: 'root',
+    host: 'localhost',
+    port: 5432,
+    database: 'database',
 };
 
 // Create a new PostgreSQL client
@@ -21,31 +22,77 @@ const client = new Client(dbConfig);
 
 // Connect to the database
 client.connect()
-  .then(() => {
-    console.log('Connected to PostgreSQL database');
+    .then(() => {
+        console.log('Connected to PostgreSQL database');
 
-    // Execute SQL queries here
+        // Execute SQL queries here
+        
+        const dropTableQuestion = `
+            DROP TABLE IF EXISTS question;
+        `;
+        const dropTableQuizz = `
+            DROP TABLE IF EXISTS quizz;
+        `;
+        
+        const createTableQuestion = `
+            CREATE TABLE question(
+                id serial PRIMARY KEY,
+                type int,
+                question text, 
+                choix1 text,
+                choix2 text, 
+                choix3 text, 
+                choix4 text
+            );
+        `;
+        const createTableQuizz = `
+            CREATE TABLE quizz(
+                id serial PRIMARY KEY,
+                libelle text
+            );
+        `;
+        
 
-    client.query('SELECT * FROM employees', (err, result) => {
-      if (err) {
-        console.error('Error executing query', err);
-      } else {
-        console.log('Query result:', result.rows);
-      }
-
-      // Close the connection when done
-      client.end()
-        .then(() => {
-          console.log('Connection to PostgreSQL closed');
-        })
-        .catch((err) => {
-          console.error('Error closing connection', err);
+        
+        client.query(dropTableQuestion, (err, result) => {
+            if (err) {
+                console.error('Error removing table Question', err);
+            } else {
+                console.log('Table Question removed successfully ');
+            }
         });
+        client.query(dropTableQuizz, (err, result) => {
+            if (err) {
+                console.error('Error removing table Quizz', err);
+            } else {
+                console.log('Table Quizz removed successfully');
+            }
+           
+        });
+        client.query(createTableQuestion, (err, result) => {
+            if (err) {
+                console.error('Error creating table', err);
+            } else {
+                console.log('Table created successfully');
+            }
+
+        });
+        client.query(createTableQuizz, (err, result) => {
+            if (err) {
+                console.error('Error creating table', err);
+            } else {
+                console.log('Table created successfully');
+            }
+            client.end();
+        });
+        
+       
+       
+        
+    })
+    .catch((err) => {
+        console.error('Error connecting to PostgreSQL database', err);
     });
-  })
-  .catch((err) => {
-    console.error('Error connecting to PostgreSQL database', err);
-  });
 
 
 io.on("connection", (socket) => {
@@ -53,7 +100,7 @@ io.on("connection", (socket) => {
 
     socket.on('createRoom', (username) => {
         const roomId = crypto.randomUUID();
-        const result = createRoom(rooms,username,roomId)
+        const result = createRoom(rooms, username, roomId)
         if (result === 0)
             socket.emit('roomCreated', (roomId))
         else {
@@ -61,19 +108,18 @@ io.on("connection", (socket) => {
         }
     })
 
-    socket.on('joinRoom', ({username, roomId}) => {
-        const result = joinRoom(rooms,username,roomId)
-        if (result === 0)
-        {
+    socket.on('joinRoom', ({ username, roomId }) => {
+        const result = joinRoom(rooms, username, roomId)
+        if (result === 0) {
             const quizzId = getQuizzId(roomId)
-            socket.emit('roomJoined', ({roomId, username, quizzId}))
+            socket.emit('roomJoined', ({ roomId, username, quizzId }))
         }
         else {
             socket.emit('error')
         }
     })
 
-    socket.on('setQuizzId', ({quizzId, roomId}) => {
+    socket.on('setQuizzId', ({ quizzId, roomId }) => {
         let room = rooms.find(room => room => room.id === roomId)
         room.quizzId = quizzId;
         room.state = 'waiting'
@@ -87,7 +133,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on('startQuizz', (roomId) => {
-        const eventName = 'quizzStarted'+roomId
+        const eventName = 'quizzStarted' + roomId
         console.log('aze')
         socket.emit(eventName)
     })
