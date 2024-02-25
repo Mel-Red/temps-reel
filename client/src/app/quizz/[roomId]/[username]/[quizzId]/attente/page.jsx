@@ -15,7 +15,7 @@ export default function Attente({params}) {
     socket.on('getRoomUser', (user) => {
         setPlayerList(user)
     })
-    socket.on(`quizzStarted${params.roomId}`, () => {
+    socket.on(`quizzStarted`, () => {
         router.push(`/quizz/${params.roomId}/${params.username}/${params.quizzId}/inGame`)
     })
 
@@ -24,7 +24,7 @@ export default function Attente({params}) {
     }
 
     useEffect(() => {
-        socket.on(`quizzStarted${params.roomId}`, () => {
+        socket.on(`quizzStarted`, () => {
             router.push(`/quizz/${params.roomId}/${params.username}/${params.quizzId}/inGame`)
         })
     }, [])

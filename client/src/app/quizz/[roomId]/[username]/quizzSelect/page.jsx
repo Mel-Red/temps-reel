@@ -12,11 +12,10 @@ export default function QuizzSelect({params}) {
 
     const router = useRouter()
 
-    console.log(quizzs)
-
     const goToQuizz = (e, quizzId) => {
         socket.emit('setQuizzId', ({quizzId, roomId}))
         socket.on('quizzIdSet', () => {
+            localStorage.setItem('roomCreator', 'true')
             router.push(`/quizz/${roomId}/${username}/${quizzId}/attente`)
         })
     }

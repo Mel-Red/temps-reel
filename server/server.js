@@ -7,7 +7,7 @@ const io = require('socket.io')(3000, {
 
 const rooms = []
 
-// Database connection configuration
+Database connection configuration
 const dbConfig = {
     user: 'root',
     password: 'root',
@@ -40,10 +40,10 @@ client.connect()
             CREATE TABLE question(
                 id serial PRIMARY KEY,
                 type int,
-                question text, 
+                question text,
                 choix1 text,
-                choix2 text, 
-                choix3 text, 
+                choix2 text,
+                choix3 text,
                 choix4 text
             );
         `;
@@ -126,8 +126,10 @@ io.on("connection", (socket) => {
     socket.on('createRoom', (username) => {
         const roomId = crypto.randomUUID();
         const result = createRoom(rooms, username, roomId)
-        if (result === 0)
+        if (result === 0) {
+            socket.join(roomId)
             socket.emit('roomCreated', (roomId))
+        }
         else {
             socket.emit('error')
         }
@@ -137,6 +139,7 @@ io.on("connection", (socket) => {
         const result = joinRoom(rooms, username, roomId)
         if (result === 0) {
             const quizzId = getQuizzId(roomId)
+            socket.join(roomId)
             socket.emit('roomJoined', ({ roomId, username, quizzId }))
         }
         else {
@@ -158,15 +161,19 @@ io.on("connection", (socket) => {
     })
 
     socket.on('startQuizz', (roomId) => {
-        const eventName = 'quizzStarted'+roomId
-        io.emit(eventName)
+        let room = rooms.find(room => room.id === roomId)
+        room.state = 'inGame'
+        io.to(roomId).emit('quizzStarted')
     })
 
-    socket.on('currentQuestion', (roomId) => {
-        setTimeout(() => {
-            const eventName = 'nextQuestion'+roomId
-            io.emit(eventName)
-        }, 10000)
+    socket.on('currentQuestion', (roomId, username) => {
+        let room = rooms.find(room => room.id === roomId)
+        console.log(room.users[0])
+        if (room.users[0] === username)
+            setTimeout(() => {
+                io.to(roomId).emit('nextQuestion')
+                console.log('lauched')
+            }, 2000)
     })
 
 
