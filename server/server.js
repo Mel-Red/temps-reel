@@ -33,6 +33,9 @@ client.connect()
         const dropTableQuizz = `
             DROP TABLE IF EXISTS quizz;
         `;
+        const dropTableQuizzQuestion = `
+            DROP TABLE IF EXISTS quizzquestion;
+        `;
         
         const createTableQuestion = `
             CREATE TABLE question(
@@ -51,9 +54,23 @@ client.connect()
                 libelle text
             );
         `;
+        const createTableQuizzQuestion = `
+            CREATE TABLE quizzquestion (
+                quizz_id INT REFERENCES Quizz(id),
+                question_id INT REFERENCES Question(id),
+                PRIMARY KEY (quizz_id, question_id)
+            );
+        `;
         
-
-        
+/*
+*/
+        client.query(dropTableQuizzQuestion, (err, result) => {
+            if (err) {
+                console.error('Error removing table QuizzQuestion', err);
+            } else {
+                console.log('Table QuizzQuestion removed successfully ');
+            }
+        });
         client.query(dropTableQuestion, (err, result) => {
             if (err) {
                 console.error('Error removing table Question', err);
@@ -69,15 +86,24 @@ client.connect()
             }
            
         });
+        
         client.query(createTableQuestion, (err, result) => {
             if (err) {
-                console.error('Error creating table', err);
+                console.error('Error creating table Question', err);
             } else {
-                console.log('Table created successfully');
+                console.log('Table Question created successfully');
             }
 
         });
         client.query(createTableQuizz, (err, result) => {
+            if (err) {
+                console.error('Error creating table Quizz', err);
+            } else {
+                console.log('Table Quizz created successfully');
+            }
+            
+        });
+        client.query(createTableQuizzQuestion, (err, result) => {
             if (err) {
                 console.error('Error creating table', err);
             } else {
