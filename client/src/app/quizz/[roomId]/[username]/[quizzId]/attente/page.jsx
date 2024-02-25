@@ -22,7 +22,9 @@ export default function Attente({params}) {
 
     const startQuizz = () => {
         socket.emit('startQuizz', (params.roomId))
-        router.push(`/quizz/${params.roomId}/${params.username}/${params.quizzId}/inGame`)
+        socket.on(`quizzStarted${params.roomId}`, () => {
+            router.push(`/quizz/${params.roomId}/${params.username}/${params.quizzId}/inGame`)
+        })
     }
 
     return(
