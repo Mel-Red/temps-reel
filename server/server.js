@@ -4,7 +4,7 @@ const io = require('socket.io')(3000, {
         methods: ["GET", "POST", "PATCH"]
     }
 })
-
+const { Client } = require('pg');
 const rooms = []
 
 // Database connection configuration
@@ -51,13 +51,13 @@ client.connect()
                 libelle text
             );
         `;
-        // const createTableQuizzQuestion = `
-        //     CREATE TABLE quizzquestion (
-        //         quizz_id INT REFERENCES Quizz(id),
-        //         question_id INT REFERENCES Question(id),
-        //         PRIMARY KEY (quizz_id, question_id)
-        //     );
-        // `;
+        const createTableQuizzQuestion = `
+            CREATE TABLE quizzquestion (
+                quizz_id INT REFERENCES Quizz(id),
+                question_id INT REFERENCES Question(id),
+                PRIMARY KEY (quizz_id, question_id)
+            );
+        `;
         const insertIntoTableQuizz = `
             INSERT INTO quizz (libelle) VALUES 
             (
@@ -115,43 +115,43 @@ client.connect()
         `;
 
         const insertIntoTableQuestionJson = `
-        INSERT INTO question (questions, type, reponse,choix) VALUES ( 
-            (
-                '1+2',
-                2,
-                '3',
-                '{
-                    "1": "3",
-                    "2": "15",
-                    "3": "16",
-                    "4": "Une belle réponse" 
-                }'
-            ),
-            (
-                '13+2',
-                2,
-                '3',
-                '{
-                    "1": "3",
-                    "2": "15",
-                    "3": "16",
-                    "4": "Une belle réponse" 
-                }'
-            ),
-            (
-                '14+2',
-                2,
-                '3',
-                '{
-                    "1": "3",
-                    "2": "15",
-                    "3": "16",
-                    "4": "Une belle réponse" 
-                }'
-            ),
-            )
+            INSERT INTO question (questions, type, reponse, choix) VALUES 
+                (
+                    '1+2',
+                    2,
+                    '1',
+                    '[
+                        {"1": "3"},
+                        {"2": "15"},
+                        {"3": "16"},
+                        {"4": "Une belle réponse"} 
+                    ]'
+                ),
+                (
+                    '1+15',
+                    2,
+                    '3',
+                    '[
+                        {"1": "3"},
+                        {"2": "15"},
+                        {"3": "16"},
+                        {"4": "Une belle réponse"} 
+                    ]'
+                ),
+                (
+                    '1+14',
+                    2,
+                    '2',
+                    '[
+                        {"1": "3"},
+                        {"2": "15"},
+                        {"3": "16"},
+                        {"4": "Une belle réponse"} 
+                    ]'
+                )
             ;
-        `
+        `;
+
         
 /*
                
@@ -195,13 +195,15 @@ client.connect()
             }
 
         });
+        
         client.query(createTableQuizzQuestion, (err, result) => {
             if (err) {
-                console.error('Error creating table', err);
+                console.error('Error inserting into table QuizzQuestion ', err);
             } else {
-                console.log('Table created successfully');
+                console.log('insert into QuizzQuestion successfulled');
             }
         });
+    
         client.query(insertIntoTableQuizz, (err, result) => {
             if (err) {
                 console.error('Error inserting into table Quizz', err);
