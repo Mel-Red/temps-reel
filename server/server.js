@@ -47,9 +47,17 @@ io.on("connection", (socket) => {
 
     socket.on('startQuizz', (roomId) => {
         const eventName = 'quizzStarted'+roomId
-        console.log('aze')
-        socket.emit(eventName)
+        io.emit(eventName)
     })
+
+    socket.on('currentQuestion', (roomId) => {
+        setTimeout(() => {
+            const eventName = 'nextQuestion'+roomId
+            io.emit(eventName)
+        }, 10000)
+    })
+
+
 
     socket.on('disconnect', () => {
         console.log('user deco')
