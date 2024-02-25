@@ -5,8 +5,7 @@ const io = require('socket.io')(3000, {
     }
 })
 const { Client } = require('pg');
-const datatype1 = "Question"
-const datatype2 = "Reponse"
+
 
 // Database connection configuration
 const dbConfig = {
