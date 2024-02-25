@@ -1,9 +1,7 @@
 #!/bin/bash
-
-cd client
+cd server
 npm install
 docker-compose up -d
-cd ../server
+cd ../client
 npm install
 docker-compose up -d
-

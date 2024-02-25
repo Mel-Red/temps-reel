@@ -2,17 +2,23 @@ version: '3.8'
 services:
   server:
     build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./:/usr/src/app
-      - /usr/src/app/node_modules # Remove this if you have pure JS dependencies
+      server/
     ports:
-      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - ./server:/usr/src/app
     depends_on:
         - postgres
     environment:
       DATABASE_URL: postgres://root:root@postgres:5432/database
+  client:
+    build:
+      client/
+    container_name: docker-next
+    ports:
+      - '3000:3000'
+    depends_on:
+      - server
   postgres:
     image: postgres:15.4-alpine
     environment:
@@ -24,7 +30,7 @@ services:
       - database_data:/var/lib/postgresql/data:rw
     ports:
       - 5432:5432
-
 volumes:
+  client:
   database_data:
   server:
