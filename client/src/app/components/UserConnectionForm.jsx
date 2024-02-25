@@ -11,9 +11,18 @@ export default function UserConnectionForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        socket.emit('joinRoom', {username, roomId});
-        socket.on('roomJoined', ({roomId, username}) => {
+        if(roomId === "") {
+            socket.emit('createRoom', (username));
+        } else {
+            socket.emit('joinRoom', ({username, roomId}))
+        }
+
+        socket.on('roomCreated', (roomId) => {
             router.push(`/quizz/${roomId}/${username}/quizzSelect`)
+        })
+
+        socket.on('roomJoined', ({roomId, username, quizzId}) => {
+            router.push(`/quizz/${roomId}/${username}/${quizzId}/attente`)
         })
     }
 

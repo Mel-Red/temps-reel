@@ -5,15 +5,31 @@ const io = require('socket.io')(3000, {
     }
 })
 
+const rooms = []
+
 io.on("connection", (socket) => {
     console.log("A user connected")
 
-    socket.on('joinRoom', ({username, roomId, quizzId}) => {
-        if (!roomId)
-            roomId = crypto.randomUUID();
-        const message = joinRoom(rooms,username,roomId,quizzId)
-        console.log(roomId)
-        socket.emit('roomJoined', ({roomId, username}))
+    socket.on('createRoom', (username) => {
+        const roomId = crypto.randomUUID();
+        const result = createRoom(rooms,username,roomId)
+        if (result === 0)
+            socket.emit('roomCreated', (roomId))
+        else {
+            socket.emit('error')
+        }
+    })
+
+    socket.on('joinRoom', ({username, roomId}) => {
+        const result = joinRoom(rooms,username,roomId)
+        if (result === 0)
+        {
+            const quizzId = getQuizzId(roomId)
+            socket.emit('roomJoined', ({roomId, username, quizzId}))
+        }
+        else {
+            socket.emit('error')
+        }
     })
 
     socket.on('setQuizzId', ({quizzId, roomId}) => {
@@ -32,6 +48,40 @@ io.on("connection", (socket) => {
         console.log('user deco')
     })
 })
+
+const createRoom = (rooms, username, roomId) => {
+    room = {
+        id: roomId,
+        quizzId: "",
+        users: [username],
+        state: 'selectQuizz'
+    }
+    rooms.push(room)
+    console.log(rooms)
+    return 0
+}
+
+const joinRoom = (rooms, username, roomId) => {
+    let room = rooms.find(room => room.id === roomId)
+
+    if (room.state !== 'waiting' && room.state !== 'selectQuizz')
+        return 1
+
+    let userInroom = rooms.find(username => room.users.username === username)
+    if (userInroom) {
+        return 2;
+    }
+
+    // j'entre dans la room
+    room.users.push(username);
+    return 0
+}
+
+const getQuizzId = (roomId) => {
+    let room = rooms.find(room => room.id === roomId)
+
+    return room.quizzId
+}
 
 
 // import { Server } from "socket.io";
@@ -81,33 +131,4 @@ io.on("connection", (socket) => {
 //
 // export default ioHandler
 
-
-const rooms = []
-
-const joinRoom = (rooms, username, roomid, quizzId = null) => {
-    let room = rooms.find(room => room.id === roomid)
-
-    let userInroom = rooms.find(username => room.users.username === username)
-    if (userInroom) {
-        return 'l\'utilisateur existe déja dans la room';
-    }
-
-    if (!room && !quizzId) {
-        // je crée la room
-        room = {
-            id: roomid,
-            quizzId: "",
-            users: [username],
-            state: 'selectQuizz'
-        }
-        rooms.push(room)
-        console.log(rooms)
-        return 'Nouvelle room crée'
-    }
-
-    // j'entre dans la room
-    room.users.push(username);
-    console.log(room)
-    return 'vous avez rejoint la room'
-}
 
