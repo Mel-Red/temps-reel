@@ -25,7 +25,6 @@ io.on("connection", (socket) => {
         if (result === 0)
         {
             const quizzId = getQuizzId(roomId)
-
             socket.emit('roomJoined', ({roomId, username, quizzId}))
         }
         else {
@@ -47,7 +46,9 @@ io.on("connection", (socket) => {
     })
 
     socket.on('startQuizz', (roomId) => {
-        socket.emit(`quizzStarted${roomId}`)
+        const eventName = 'quizzStarted'+roomId
+        console.log('aze')
+        socket.emit(eventName)
     })
 
     socket.on('disconnect', () => {
