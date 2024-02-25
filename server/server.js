@@ -25,6 +25,7 @@ io.on("connection", (socket) => {
         if (result === 0)
         {
             const quizzId = getQuizzId(roomId)
+
             socket.emit('roomJoined', ({roomId, username, quizzId}))
         }
         else {
@@ -44,6 +45,11 @@ io.on("connection", (socket) => {
         let room = rooms.find(room => room.id === roomId)
         socket.emit('getRoomUser', (room.users))
     })
+
+    socket.on('startQuizz', (roomId) => {
+        socket.emit(`quizzStarted${roomId}`)
+    })
+
     socket.on('disconnect', () => {
         console.log('user deco')
     })
@@ -79,7 +85,6 @@ const joinRoom = (rooms, username, roomId) => {
 
 const getQuizzId = (roomId) => {
     let room = rooms.find(room => room.id === roomId)
-
     return room.quizzId
 }
 
