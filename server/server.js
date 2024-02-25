@@ -4,8 +4,8 @@ const io = require('socket.io')(3000, {
         methods: ["GET", "POST", "PATCH"]
     }
 })
-const { Client } = require('pg');
 
+const rooms = []
 
 // Database connection configuration
 const dbConfig = {
@@ -25,7 +25,7 @@ client.connect()
         console.log('Connected to PostgreSQL database');
 
         // Execute SQL queries here
-        
+
         const dropTableQuestion = `
             DROP TABLE IF EXISTS question;
         `;
@@ -35,7 +35,7 @@ client.connect()
         const dropTableQuizzQuestion = `
             DROP TABLE IF EXISTS quizzquestion;
         `;
-        
+
         const createTableQuestion = `
             CREATE TABLE question(
                 id serial PRIMARY KEY,
@@ -176,9 +176,9 @@ client.connect()
             } else {
                 console.log('Table Quizz removed successfully');
             }
-           
+
         });
-        
+
         client.query(createTableQuestion, (err, result) => {
             if (err) {
                 console.error('Error creating table Question', err);
@@ -193,7 +193,7 @@ client.connect()
             } else {
                 console.log('Table Quizz created successfully');
             }
-            
+
         });
         client.query(createTableQuizzQuestion, (err, result) => {
             if (err) {
@@ -271,10 +271,18 @@ io.on("connection", (socket) => {
     })
 
     socket.on('startQuizz', (roomId) => {
-        const eventName = 'quizzStarted' + roomId
-        console.log('aze')
-        socket.emit(eventName)
+        const eventName = 'quizzStarted'+roomId
+        io.emit(eventName)
     })
+
+    socket.on('currentQuestion', (roomId) => {
+        setTimeout(() => {
+            const eventName = 'nextQuestion'+roomId
+            io.emit(eventName)
+        }, 10000)
+    })
+
+
 
     socket.on('disconnect', () => {
         console.log('user deco')

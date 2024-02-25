@@ -16,16 +16,18 @@ export default function Attente({params}) {
         setPlayerList(user)
     })
     socket.on(`quizzStarted${params.roomId}`, () => {
-        console.log('hemlo')
         router.push(`/quizz/${params.roomId}/${params.username}/${params.quizzId}/inGame`)
     })
 
     const startQuizz = () => {
         socket.emit('startQuizz', (params.roomId))
+    }
+
+    useEffect(() => {
         socket.on(`quizzStarted${params.roomId}`, () => {
             router.push(`/quizz/${params.roomId}/${params.username}/${params.quizzId}/inGame`)
         })
-    }
+    }, [])
 
     return(
         <div className={styles.main}>
