@@ -40,11 +40,9 @@ client.connect()
             CREATE TABLE question(
                 id serial PRIMARY KEY,
                 type int,
-                question text, 
-                choix1 text,
-                choix2 text, 
-                choix3 text, 
-                choix4 text
+                questions text, 
+                reponse text,
+                choix JSONB
             );
         `;
         const createTableQuizz = `
@@ -53,15 +51,110 @@ client.connect()
                 libelle text
             );
         `;
-        const createTableQuizzQuestion = `
-            CREATE TABLE quizzquestion (
-                quizz_id INT REFERENCES Quizz(id),
-                question_id INT REFERENCES Question(id),
-                PRIMARY KEY (quizz_id, question_id)
-            );
+        // const createTableQuizzQuestion = `
+        //     CREATE TABLE quizzquestion (
+        //         quizz_id INT REFERENCES Quizz(id),
+        //         question_id INT REFERENCES Question(id),
+        //         PRIMARY KEY (quizz_id, question_id)
+        //     );
+        // `;
+        const insertIntoTableQuizz = `
+            INSERT INTO quizz (libelle) VALUES 
+            (
+                
+                'Questionnaire culture G'
+            ),
+            (
+                 
+                'Questionnaire culture Histoire'
+            ),
+            (
+                 
+                'Questionnaire culture Math'
+            )
+             ;
         `;
+        const insertIntoTableQuestion = `
+            INSERT INTO question (questions, type, reponse) VALUES ( 
+            
+                    '1+1',
+                    1,
+                    '2'
+                ),
+                (
+                    '1+2',
+                    1,
+                    '3'
+                ),
+                (
+                    '1+3',
+                    1,
+                    '4'
+                ),
+                (
+                    '1+4',
+                    1,
+                    '5'
+                ),
+                (
+                    '1+5',
+                    1,
+                    '6'
+                ),
+                (
+                    '1+6',
+                    1,
+                    '7'
+                ),
+                (
+                    'Quelle est la nationnalité de Napoleon ?',
+                    2,
+                    'Corse'
+                )
+            ;
+        `;
+
+        const insertIntoTableQuestionJson = `
+        INSERT INTO question (questions, type, reponse,choix) VALUES ( 
+            (
+                '1+2',
+                2,
+                '3',
+                '{
+                    "1": "3",
+                    "2": "15",
+                    "3": "16",
+                    "4": "Une belle réponse" 
+                }'
+            ),
+            (
+                '13+2',
+                2,
+                '3',
+                '{
+                    "1": "3",
+                    "2": "15",
+                    "3": "16",
+                    "4": "Une belle réponse" 
+                }'
+            ),
+            (
+                '14+2',
+                2,
+                '3',
+                '{
+                    "1": "3",
+                    "2": "15",
+                    "3": "16",
+                    "4": "Une belle réponse" 
+                }'
+            ),
+            )
+            ;
+        `
         
 /*
+               
 */
         client.query(dropTableQuizzQuestion, (err, result) => {
             if (err) {
@@ -108,11 +201,31 @@ client.connect()
             } else {
                 console.log('Table created successfully');
             }
+        });
+        client.query(insertIntoTableQuizz, (err, result) => {
+            if (err) {
+                console.error('Error inserting into table Quizz', err);
+            } else {
+                console.log('insert into Quizz successfulled');
+            }
+        });
+        client.query(insertIntoTableQuestionJson, (err, result) => {
+            if (err) {
+                console.error('Error inserting into table Question JSON', err);
+            } else {
+                console.log('insert into Question JSON successfulled');
+            }
+        });
+        client.query(insertIntoTableQuestion, (err, result) => {
+            if (err) {
+                console.error('Error inserting into table Question', err);
+            } else {
+                console.log('insert into Question successfulled');
+            }
             client.end();
         });
         
-       
-       
+       //insertIntoTableQuestionJson
         
     })
     .catch((err) => {
